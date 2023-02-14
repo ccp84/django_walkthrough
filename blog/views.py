@@ -27,6 +27,7 @@ class PostDetail(View):
             {
                 "post": post,
                 "comments": comments,
+                "commented": False,
                 "liked": liked,
                 "comment_form": CommentForm()
             },
@@ -44,6 +45,12 @@ class PostDetail(View):
 
         if comment_form.is_valid():
             comment_form.instance.email = request.user.email
+            comment_form.instance.name = request.user.username
+            comment = comment_form.save(commit=False)
+            comment.post = post
+            comment.save()
+        else:
+            comment_form = CommentForm()
 
         return render(
             request,
@@ -51,6 +58,7 @@ class PostDetail(View):
             {
                 "post": post,
                 "comments": comments,
+                "commented": True,
                 "liked": liked,
                 "comment_form": CommentForm()
             },
